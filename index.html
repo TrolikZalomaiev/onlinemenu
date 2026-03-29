@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restaurant Meny</title>
+    <style>
+        :root {
+            --primary: #ff80bf;
+            
+            --bg-page: #fff5f8; 
+            --text-dark: #333;
+        }
+
+        body { 
+            font-family: 'Segoe UI', sans-serif; 
+            
+            background-color: var(--bg-page); 
+            color: var(--text-dark); 
+            margin: 0; 
+            padding: 15px; 
+        }
+
+        .container { 
+            max-width: 550px; 
+            margin: 0 auto; 
+            background: rgb(255, 255, 255); 
+            padding: 20px; 
+            border-radius: 20px; 
+            box-shadow: 0 5px 15px rgba(255,128,191,0.1); 
+        }
+        
+        h1 { text-align: center; font-size: 28px; margin-bottom: 25px; color: var(--text-dark); }
+
+     
+        .tabs-container { 
+            display: flex; 
+            overflow-x: auto; 
+            gap: 10px; 
+            margin-bottom: 20px; 
+            border-bottom: 2px solid var(--primary); 
+            padding-bottom: 10px; 
+            scrollbar-width: none; 
+        }
+        .tabs-container::-webkit-scrollbar { display: none; }
+        
+        .tab-btn { 
+            padding: 10px 20px; 
+            border: none; 
+           
+            background: #ffe6f0; 
+            border-radius: 20px; 
+            cursor: pointer; 
+            white-space: nowrap; 
+            font-weight: bold; 
+            transition: 0.3s; 
+            color: #555;
+        }
+        .tab-btn.active { 
+            background: var(--primary); 
+            color: white; 
+        }
+
+        /* Контент меню */
+        .menu-page { display: none; }
+        .menu-page.active { display: block; animation: fadeIn 0.4s; }
+
+        .item { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: flex-start; 
+            padding: 18px 0; 
+            border-bottom: 1px solid #eee; 
+        }
+        .item:last-child { border-bottom: none; }
+
+        .item-info { flex: 1; padding-right: 15px; }
+        .item-name { font-weight: bold; font-size: 18px; margin-bottom: 4px; }
+        .item-desc { font-size: 14px; color: #777; line-height: 1.4; }
+        .item-price { 
+            font-weight: bold; 
+            color: var(--primary); 
+            font-size: 17px;
+            white-space: nowrap;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Meny</h1>
+
+    <div class="tabs-container" id="tabs"></div>
+    <div id="menu-content"></div>
+</div>
+
+<script>
+   
+    const menuData = {
+        "Meny": [
+            { name: "Cæsarsalat", desc: "Salat, dressing, grilla kylling, tomat, egg, bacon, parmesan, brød", price: "185 kr" },
+            { name: "Husets Burger", desc: "Briochebrød, heimelaga burger, husets dressing, pommes", price: "275 kr" },
+            { name: "Kyllingsandwich", desc: "Ciabatta, kylling, salat, husets fetaostdressing, pommes", price: "220 kr" },
+            { name: "Ciabatta med ost og skinke", desc: "Nysteikt Ciabatta, ost, skinke, salat, smør", price: "100 kr" },
+            { name: "Ciabatta røykelaks og eggerøre", desc: "Nysteikt ciabatta, røkelaks, eggerøre, salat, smør", price: "120 kr" }
+        ],
+        "Pizza": [
+            { name: "Margarita", desc: "Heimelaga italiensk bunn, rød saus, ost", price: "150 kr" },
+            { name: "Silliana", desc: "Silliana salami, rød saus, ost", price: "170 kr" },
+            { name: "Cæsar", desc: "Kvit saus, kylling, tomat, bacon, ost", price: "180 kr" },
+            { name: "Nduja", desc: "Nduja (chillipølse), rød saus, løк, kjøttdeig, ost", price: "180 kr" },
+            { name: "Pesto-pizza", desc: "Fetaost, oliven, crispi-salat, pesto, ost", price: "170 kr" },
+            { name: "Hangoveren", desc: "Pepperoni, kjøttdeig, fries, kvitløksdressing, ost", price: "190 kr" }
+        ],
+        "Pasta": [
+            { name: "Carbonara", desc: "Pasta, fløte, bacon, egg, parmesan", price: "165 kr" },
+            { name: "Nduja-pasta", desc: "Nduja (chillipølse), pasta, kvitløk, løк, parmensan", price: "175 kr" },
+            { name: "Kyllingpasta", desc: "Pesto, fløte, grillet kylling, parmesan", price: "170 kr" },
+            { name: "Bolognese", desc: "Kjøttdeig, rød saus, løк, kvitløk, parmesan", price: "170 kr" },
+            { name: "Pasta Pesto", desc: "Pesto, pasta, feta, rødløk, cherrytomat, parmesan", price: "165 kr" }
+        ],
+        "Dessert & Barn": [
+            { name: "Gulrotkake", desc: "Husets gulrotkake med topping", price: "85 kr" },
+            { name: "Lun Brownies", desc: "Heimelaga salt karamellsaus og vaniljeis", price: "85 kr" },
+            { name: "Affogato", desc: "Vaniljeis, cognackrem, espressoshot", price: "65 kr" },
+            { name: "Barnemeny Minipizza", desc: "Heimelagsa Italiensk bunн, ost, skinke", price: "99 kr" },
+            { name: "Barnemeny Burger", desc: "Med fries", price: "99 kr" },
+            { name: "Pølse Med Brød/Fries", desc: "Klassisk barnemeny", price: "99 kr" }
+        ],
+        "Dagens": [
+            { name: "Dagens rett", desc: "Dagens utvalde rett frå kjøkkenet", price: "Sjå tavle" }
+        ]
+    };
+
+    function init() {
+        const tabsDiv = document.getElementById('tabs');
+        const contentDiv = document.getElementById('menu-content');
+
+        Object.keys(menuData).forEach((category, index) => {
+            const btn = document.createElement('button');
+            btn.className = `tab-btn ${index === 0 ? 'active' : ''}`;
+            btn.innerText = category;
+            btn.onclick = () => openTab(category, btn);
+            tabsDiv.appendChild(btn);
+
+            const section = document.createElement('div');
+            section.id = `section-${category}`;
+            section.className = `menu-page ${index === 0 ? 'active' : ''}`;
+
+            menuData[category].forEach(item => {
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'item';
+                itemDiv.innerHTML = `
+                    <div class="item-info">
+                        <div class="item-name">${item.name}</div>
+                        <div class="item-desc">${item.desc}</div>
+                    </div>
+                    <div class="item-price">${item.price}</div>
+                `;
+                section.appendChild(itemDiv);
+            });
+            contentDiv.appendChild(section);
+        });
+    }
+
+    function openTab(cat, btn) {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.menu-page').forEach(p => p.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById(`section-${cat}`).classList.add('active');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    init();
+</script>
+
+</body>
+</html>
