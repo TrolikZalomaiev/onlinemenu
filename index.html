@@ -7,14 +7,12 @@
     <style>
         :root {
             --primary: #ff80bf;
-            
             --bg-page: #fff5f8; 
             --text-dark: #333;
         }
 
         body { 
             font-family: 'Segoe UI', sans-serif; 
-            
             background-color: var(--bg-page); 
             color: var(--text-dark); 
             margin: 0; 
@@ -30,9 +28,9 @@
             box-shadow: 0 5px 15px rgba(255,128,191,0.1); 
         }
         
-        h1 { text-align: center; font-size: 28px; margin-bottom: 25px; color: var(--text-dark); }
+        h1 { text-align: center; font-size: 28px; margin-bottom: 25px; }
 
-     
+        /* Контейнер вкладок с поддержкой скролла */
         .tabs-container { 
             display: flex; 
             overflow-x: auto; 
@@ -40,14 +38,15 @@
             margin-bottom: 20px; 
             border-bottom: 2px solid var(--primary); 
             padding-bottom: 10px; 
-            scrollbar-width: none; 
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none; /* IE */
+            -webkit-overflow-scrolling: touch;
         }
-        .tabs-container::-webkit-scrollbar { display: none; }
+        .tabs-container::-webkit-scrollbar { display: none; } /* Chrome/Safari */
         
         .tab-btn { 
             padding: 10px 20px; 
             border: none; 
-           
             background: #ffe6f0; 
             border-radius: 20px; 
             cursor: pointer; 
@@ -55,13 +54,14 @@
             font-weight: bold; 
             transition: 0.3s; 
             color: #555;
+            flex-shrink: 0; /* Не дает кнопкам сжиматься */
         }
+
         .tab-btn.active { 
             background: var(--primary); 
             color: white; 
         }
 
-        /* Контент меню */
         .menu-page { display: none; }
         .menu-page.active { display: block; animation: fadeIn 0.4s; }
 
@@ -94,13 +94,11 @@
 
 <div class="container">
     <h1>Meny</h1>
-
     <div class="tabs-container" id="tabs"></div>
     <div id="menu-content"></div>
 </div>
 
 <script>
-   
     const menuData = {
         "Meny": [
             { name: "Cæsarsalat", desc: "Salat, dressing, grilla kylling, tomat, egg, bacon, parmesan, brød", price: "185 kr" },
@@ -119,13 +117,13 @@
         ],
         "Pasta": [
             { name: "Carbonara", desc: "Pasta, fløte, bacon, egg, parmesan", price: "165 kr" },
-            { name: "Nduja-pasta", desc: "Nduja (chillipølse), pasta, kvitløk, løк, parmensan", price: "175 kr" },
+            { name: "Nduja-pasta", desc: "Nduja (chillipølse), pasta, kvitløк, løк, parmensan", price: "175 kr" },
             { name: "Kyllingpasta", desc: "Pesto, fløte, grillet kylling, parmesan", price: "170 kr" },
-            { name: "Bolognese", desc: "Kjøttdeig, rød saus, løк, kvitløk, parmesan", price: "170 kr" },
+            { name: "Bolognese", desc: "Kjøttdeig, rød saus, løк, kvitløк, parmesan", price: "170 kr" },
             { name: "Pasta Pesto", desc: "Pesto, pasta, feta, rødløk, cherrytomat, parmesan", price: "165 kr" }
         ],
         "Dessert & Barn": [
-            { name: "Chocolate kake", desc: "sjokoladekake med pepekannøtter og karamellsaus", price: "120 kr" },
+            { name: "Chocolate kake", desc: "sjokoladekake med pepekannøtter и karamellsaus", price: "120 kr" },
             { name: "Ostekake", desc: "", price: "120 kr" },
         ],
         "Dagens": [
@@ -136,16 +134,23 @@
     function init() {
         const tabsDiv = document.getElementById('tabs');
         const contentDiv = document.getElementById('menu-content');
+        
+        // Очищаем на всякий случай
+        tabsDiv.innerHTML = '';
+        contentDiv.innerHTML = '';
 
         Object.keys(menuData).forEach((category, index) => {
+            // Создаем кнопку
             const btn = document.createElement('button');
             btn.className = `tab-btn ${index === 0 ? 'active' : ''}`;
             btn.innerText = category;
-            btn.onclick = () => openTab(category, btn);
+            btn.setAttribute('data-target', index); // Привязываем индекс
+            btn.onclick = (e) => openTab(index, e.target);
             tabsDiv.appendChild(btn);
 
+            // Создаем секцию контента
             const section = document.createElement('div');
-            section.id = `section-${category}`;
+            section.id = `section-${index}`;
             section.className = `menu-page ${index === 0 ? 'active' : ''}`;
 
             menuData[category].forEach(item => {
@@ -164,12 +169,17 @@
         });
     }
 
-    function openTab(cat, btn) {
+    function openTab(index, btn) {
+        // Убираем активный класс у всех кнопок и страниц
         document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
         document.querySelectorAll('.menu-page').forEach(p => p.classList.remove('active'));
+        
+        // Активируем нужные
         btn.classList.add('active');
-        document.getElementById(`section-${cat}`).classList.add('active');
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        document.getElementById(`section-${index}`).classList.add('active');
+
+        // Плавно скроллим кнопку в центр
+        btn.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
     }
 
     init();
