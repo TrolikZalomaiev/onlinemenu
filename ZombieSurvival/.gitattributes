@@ -1,0 +1,6 @@
+*.cs text eol=lf
+*.fbx binary
+*.png binary
+*.unity text merge=unityyamlmerge eol=lf
+*.prefab text merge=unityyamlmerge eol=lf
+*.asset text merge=unityyamlmerge eol=lf
