@@ -79,10 +79,29 @@ namespace ZombieSurvival
                 GUI.Label(new Rect(sw - 360f, sh - 44f, 340f, 30f),
                     $"{PlayerInventory.DisplayName(b.costItem)}: {inventory.Count(b.costItem)} (нужно {b.cost})", small);
             }
-            else if (weapon != null)
+            else if (weapon != null && weapon.CurrentWeapon != null)
             {
                 string ammo = weapon.Reloading ? "перезарядка..." : $"{weapon.InMagazine} / {inventory.Count(ItemType.Ammo)}";
-                GUI.Label(new Rect(sw - 260f, sh - 60f, 240f, 40f), ammo, big);
+                GUI.Label(new Rect(sw - 300f, sh - 92f, 280f, 30f), weapon.CurrentWeapon.name, small);
+                GUI.Label(new Rect(sw - 300f, sh - 64f, 280f, 40f), ammo, big);
+            }
+
+            // Слоты оружия
+            if (weapon != null)
+            {
+                float slotW = 120f, total = slotW * weapon.Count;
+                for (int i = 0; i < weapon.Count; i++)
+                {
+                    var r = new Rect(sw / 2f - total / 2f + i * slotW, sh - 40f, slotW - 4f, 28f);
+                    bool open = weapon.IsUnlocked(i);
+                    var prev = GUI.color;
+                    GUI.color = i == weapon.CurrentIndex ? new Color(1f, 0.85f, 0.4f) : open ? Color.white : new Color(1f, 1f, 1f, 0.35f);
+                    GUI.Box(r, open ? $"{i + 1} {weapon.Get(i).name}" : $"{i + 1} ???");
+                    GUI.color = prev;
+                }
+
+                if (Time.time - weapon.NoticeTime < 3f)
+                    GUI.Label(new Rect(sw / 2f - 300f, sh / 2f - 80f, 600f, 36f), weapon.Notice, center);
             }
 
             // Инвентарь
@@ -98,9 +117,10 @@ namespace ZombieSurvival
 
             if (showHelp)
             {
-                GUILayout.BeginArea(new Rect(20f, 250f, 300f, 240f), GUI.skin.box);
+                GUILayout.BeginArea(new Rect(20f, 250f, 300f, 262f), GUI.skin.box);
                 GUILayout.Label("WASD — ходить, Shift — бег, Space — прыжок");
                 GUILayout.Label("ЛКМ — стрелять, R — перезарядка");
+                GUILayout.Label("1–6 / колесо — оружие, ПКМ — прицел");
                 GUILayout.Label("E — обыскать / собрать");
                 GUILayout.Label("Tab — крафт, H — аптечка");
                 GUILayout.Label("B — стройка, 1/2/3 — блок");

@@ -30,6 +30,8 @@
 |---|---|
 | WASD / Shift / Space | ходьба / бег / прыжок |
 | ЛКМ / R | стрельба / перезарядка |
+| 1–6 / колесо мыши | смена оружия |
+| ПКМ | прицел (снайперка) |
 | E | обыскать ящик, бочку, срубить дерево, добыть камень |
 | Tab | меню крафта (патроны, порох, аптечки) |
 | H | использовать аптечку |
@@ -45,7 +47,7 @@
 | Здоровье, урон, респаун | `Scripts/Core/Health.cs` |
 | Движение от первого лица | `Scripts/Player/PlayerController.cs` |
 | Инвентарь | `Scripts/Player/PlayerInventory.cs` |
-| Оружие (хитскан, магазин, перезарядка) | `Scripts/Weapons/Weapon.cs` |
+| Оружие: 6 стволов, магазины, разброс, дробь, прицел, оружие находится в луте | `Scripts/Weapons/Weapon.cs` |
 | Крафт | `Scripts/Crafting/CraftingSystem.cs` |
 | Стройка по сетке + разбор | `Scripts/Building/BuildingSystem.cs` |
 | ИИ зомби (днём бродят, ночью бегут, ломают стены) | `Scripts/Zombies/ZombieAI.cs` |
@@ -57,6 +59,20 @@
 
 Все параметры (скорость зомби, длина дня, размер орды, рецепты, лут) настраиваются в инспекторе Unity на префабах в `Assets/ZombieSurvival/Generated/Prefabs` и на объекте `GameSystems` в сцене.
 
+## Оружие
+
+| # | Ствол | Модель | Где взять |
+|---|---|---|---|
+| 1 | Пистолет | Pistol_1 | есть со старта |
+| 2 | АК-47 | AssaultRifle_2 | сундуки (15%) |
+| 3 | M4 | AssaultRifle2_2 | сундуки (10%) |
+| 4 | Дробовик (8 дробин) | Shotgun_1 | сундуки (20%), ящики (4%) |
+| 5 | ПП | SubmachineGun_2 | сундуки (20%), ящики (5%) |
+| 6 | Снайперка с прицелом | SniperRifle_1 | сундуки (7%) |
+
+Найденный дубликат превращается в 15 патронов. Патроны общие для всех стволов.
+Чтобы поменять модель или характеристики — правь массив `Arsenal` в `PrototypeBuilder.cs` и пересобери прототип (в паке 40 стволов: `Assets/ThirdParty/Quaternius/UltimateGunPack`).
+
 ## Бесплатные модели
 
 В проект уже скачаны модели **Kenney** (лицензия CC0 — можно использовать бесплатно, даже в коммерческой игре):
@@ -67,6 +83,7 @@
 | Blaster Kit | оружие, магазины, прицелы, гранаты | `Assets/ThirdParty/Kenney/BlasterKit` |
 | Survival Kit | ящики, бочки, деревья, камни, инструменты, верстаки, костёр, палатки | `Assets/ThirdParty/Kenney/SurvivalKit` |
 | City Kit Suburban | дома, заборы, дорожки | `Assets/ThirdParty/Kenney/CitySuburban` |
+| **Quaternius Ultimate Gun Pack** | 40 стволов (АК, M4, снайперки, дробовики, ПП, пистолеты, револьверы) + прицелы, глушители | `Assets/ThirdParty/Quaternius/UltimateGunPack` |
 
 ### Чтобы было ещё ближе к стилю POLYGON
 
@@ -75,7 +92,7 @@
 | Что | Где | Лицензия |
 |---|---|---|
 | **POLYGON Starter Pack** (Synty) — тот самый стиль со скриншота | Unity Asset Store, бесплатно | Asset Store EULA |
-| **Quaternius: Zombie Apocalypse Kit, Ultimate Zombies, Ultimate Guns, Modular Buildings** | quaternius.com | CC0 |
+| **Quaternius: Zombie Apocalypse Kit** (анимированные зомби и выжившие), Modular Buildings | quaternius.com (Google Drive, качать через браузер) | CC0 |
 | **KayKit: City Builder, Adventurers, Prototype Bits** | kaylousberg.itch.io | CC0 |
 | **Анимации** (бег, удар, смерть зомби) | mixamo.com (нужен Adobe-аккаунт, бесплатно) | бесплатно для игр |
 | Звуки выстрелов и зомби | freesound.org, kenney.nl/assets (Impact/Interface sounds) | CC0 / CC-BY |
@@ -85,7 +102,7 @@
 ## Если что-то пошло не так
 
 - **Всё розовое** → меню **Zombie Survival → 1. Настроить графику (URP)**.
-- **Персонажи или оружие повёрнуты не той стороной** → в `PrototypeBuilder.cs` поменяй `CharacterYaw` / `WeaponYaw` (0 или 180) и пересобери прототип.
+- **Персонажи повёрнуты не той стороной** → в `PrototypeBuilder.cs` поменяй `CharacterYaw` (0 или 180) и пересобери прототип. Оружие разворачивается автоматически.
 - **Unity ругается на версии пакетов** → Window → Package Manager → обнови пакет до предложенной версии.
 - **Ошибки компиляции** → скопируй текст из Console и отправь мне.
 
@@ -94,7 +111,7 @@
 1. Анимации персонажей и зомби (Mixamo + Animator).
 2. Unity Relay + Lobby — игра с другом через интернет по коду комнаты.
 3. Сохранение мира и построек.
-4. Больше оружия (дробовик, винтовка, лук), ближний бой.
+4. Ближний бой (бита, топор), гранаты, звуки выстрелов.
 5. Двери, ловушки, шипы, турели.
 6. Голод / жажда, фермерство.
 7. Настоящий UI (инвентарь с ячейками, крафт с иконками).

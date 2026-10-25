@@ -5,7 +5,8 @@ using UnityEngine;
 
 namespace ZombieSurvival
 {
-    public enum ItemType { Scrap, Gunpowder, Wood, Stone, Ammo, Medkit }
+    // Новые значения добавлять только в конец — номера сохранены в префабах.
+    public enum ItemType { Scrap, Gunpowder, Wood, Stone, Ammo, Medkit, WeaponAK, WeaponM4, WeaponShotgun, WeaponSMG, WeaponSniper }
 
     /// <summary>
     /// Инвентарь хранится у владельца. Сервер выдаёт предметы через GiveRpc.
@@ -69,6 +70,11 @@ namespace ZombieSurvival
                 case ItemType.Stone: return "Камень";
                 case ItemType.Ammo: return "Патроны";
                 case ItemType.Medkit: return "Аптечка";
+                case ItemType.WeaponAK: return "АК-47";
+                case ItemType.WeaponM4: return "M4";
+                case ItemType.WeaponShotgun: return "Дробовик";
+                case ItemType.WeaponSMG: return "Пистолет-пулемёт";
+                case ItemType.WeaponSniper: return "Снайперская винтовка";
                 default: return item.ToString();
             }
         }

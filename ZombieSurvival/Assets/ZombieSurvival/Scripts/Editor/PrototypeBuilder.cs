@@ -27,9 +27,36 @@ namespace ZombieSurvival.EditorTools
         const float TownRadius = 45f;
 
         // Если модели смотрят не туда — поправь эти углы и пересобери прототип.
+        // Оружие разворачивается автоматически (OrientBarrelForward).
         const float CharacterYaw = 0f;
-        const float WeaponYaw = 180f;
         const float HouseFrontYaw = 0f;
+        const string Guns = "Quaternius/UltimateGunPack";
+
+        struct GunSpec
+        {
+            public string name, model;
+            public bool start;
+            public ItemType unlock;
+            public float length, damage, rate, reload, spread, range, zoom, kick;
+            public bool auto;
+            public int magazine, pellets;
+        }
+
+        static readonly GunSpec[] Arsenal =
+        {
+            new GunSpec { name = "Пистолет", model = "Pistol_1", start = true, length = 0.3f,
+                damage = 28f, rate = 5f, auto = false, magazine = 12, reload = 1.3f, pellets = 1, spread = 0.6f, range = 90f, kick = 0.8f },
+            new GunSpec { name = "АК-47", model = "AssaultRifle_2", unlock = ItemType.WeaponAK, length = 0.85f,
+                damage = 32f, rate = 9f, auto = true, magazine = 30, reload = 2.2f, pellets = 1, spread = 1.4f, range = 150f, kick = 1f },
+            new GunSpec { name = "M4", model = "AssaultRifle2_2", unlock = ItemType.WeaponM4, length = 0.8f,
+                damage = 27f, rate = 11f, auto = true, magazine = 30, reload = 2f, pellets = 1, spread = 0.9f, range = 150f, kick = 0.8f },
+            new GunSpec { name = "Дробовик", model = "Shotgun_1", unlock = ItemType.WeaponShotgun, length = 0.9f,
+                damage = 14f, rate = 1.3f, auto = false, magazine = 6, reload = 2.6f, pellets = 8, spread = 5.5f, range = 35f, kick = 1.8f },
+            new GunSpec { name = "ПП", model = "SubmachineGun_2", unlock = ItemType.WeaponSMG, length = 0.55f,
+                damage = 18f, rate = 13f, auto = true, magazine = 25, reload = 1.7f, pellets = 1, spread = 2.2f, range = 70f, kick = 0.6f },
+            new GunSpec { name = "Снайперка", model = "SniperRifle_1", unlock = ItemType.WeaponSniper, length = 1.05f,
+                damage = 120f, rate = 0.8f, auto = false, magazine = 5, reload = 2.8f, pellets = 1, spread = 0.05f, range = 300f, zoom = 22f, kick = 2.2f },
+        };
 
         struct Materials
         {
@@ -100,11 +127,20 @@ namespace ZombieSurvival.EditorTools
             };
 
             // Лут и ресурсы
-            var crate = CreateLootPrefab("Loot_Crate", "SurvivalKit/box-large", "Ящик", 1.1f, false, 600f, null);
+            var crate = CreateLootPrefab("Loot_Crate", "SurvivalKit/box-large", "Ящик", 1.1f, false, 600f, new[]
+            {
+                Loot(ItemType.Scrap, 1, 4, 0.9f), Loot(ItemType.Gunpowder, 1, 3, 0.6f),
+                Loot(ItemType.Ammo, 5, 15, 0.4f), Loot(ItemType.Medkit, 1, 1, 0.15f),
+                Loot(ItemType.WeaponSMG, 1, 1, 0.05f), Loot(ItemType.WeaponShotgun, 1, 1, 0.04f),
+            });
+            // Сундуки — главный источник оружия.
             var chest = CreateLootPrefab("Loot_Chest", "SurvivalKit/chest", "Сундук", 0.9f, false, 900f, new[]
             {
                 Loot(ItemType.Ammo, 10, 25, 0.8f), Loot(ItemType.Gunpowder, 2, 4, 0.7f),
                 Loot(ItemType.Scrap, 2, 5, 0.7f), Loot(ItemType.Medkit, 1, 2, 0.4f),
+                Loot(ItemType.WeaponShotgun, 1, 1, 0.2f), Loot(ItemType.WeaponSMG, 1, 1, 0.2f),
+                Loot(ItemType.WeaponAK, 1, 1, 0.15f), Loot(ItemType.WeaponM4, 1, 1, 0.1f),
+                Loot(ItemType.WeaponSniper, 1, 1, 0.07f),
             });
             var barrel = CreateLootPrefab("Loot_Barrel", "SurvivalKit/barrel", "Бочка", 1.2f, false, 600f, new[]
             {
@@ -365,16 +401,9 @@ namespace ZombieSurvival.EditorTools
             // Оружие в руках
             var holder = new GameObject("WeaponHolder");
             holder.transform.SetParent(head.transform, false);
-            holder.transform.localPosition = new Vector3(0.22f, -0.2f, 0.42f);
-            var gun = InstantiateModel("BlasterKit/blaster-b", holder.transform);
-            gun.name = "Gun";
-            gun.transform.localRotation = Quaternion.Euler(0f, WeaponYaw, 0f);
-            FitToMaxSize(gun, 0.55f);
-            CenterOn(gun, holder.transform);
-            foreach (var r in gun.GetComponentsInChildren<Renderer>()) r.shadowCastingMode = ShadowCastingMode.Off;
-            var muzzle = new GameObject("Muzzle");
-            muzzle.transform.SetParent(holder.transform, false);
-            muzzle.transform.localPosition = new Vector3(0f, 0.04f, 0.3f);
+            holder.transform.localPosition = new Vector3(0.2f, -0.22f, 0.36f);
+            var guns = new List<(GameObject model, Transform muzzle)>();
+            foreach (var spec in Arsenal) guns.Add(CreateGunModel(spec, holder.transform));
 
             var controller = root.AddComponent<PlayerController>();
             SetFields(controller, ("head", head.transform), ("playerCamera", cam), ("bodyVisual", body.transform));
@@ -384,7 +413,31 @@ namespace ZombieSurvival.EditorTools
             SetFields(health, ("maxHealth", 100f), ("onDeath", (int)DeathBehavior.Respawn));
 
             var weapon = root.AddComponent<Weapon>();
-            SetFields(weapon, ("muzzle", muzzle.transform), ("model", holder.transform));
+            SetFields(weapon, ("holder", holder.transform));
+            var wso = new SerializedObject(weapon);
+            var list = wso.FindProperty("weapons");
+            list.arraySize = Arsenal.Length;
+            for (int i = 0; i < Arsenal.Length; i++)
+            {
+                var g = Arsenal[i];
+                var el = list.GetArrayElementAtIndex(i);
+                SetRelative(el, "name", g.name);
+                SetRelative(el, "startUnlocked", g.start);
+                SetRelative(el, "unlockItem", (int)g.unlock);
+                SetRelative(el, "model", guns[i].model);
+                SetRelative(el, "muzzle", guns[i].muzzle);
+                SetRelative(el, "damage", g.damage);
+                SetRelative(el, "shotsPerSecond", g.rate);
+                SetRelative(el, "automatic", g.auto);
+                SetRelative(el, "magazineSize", g.magazine);
+                SetRelative(el, "reloadTime", g.reload);
+                SetRelative(el, "pellets", g.pellets);
+                SetRelative(el, "spread", g.spread);
+                SetRelative(el, "range", g.range);
+                SetRelative(el, "zoomFov", g.zoom);
+                SetRelative(el, "recoilKick", g.kick);
+            }
+            wso.ApplyModifiedPropertiesWithoutUndo();
 
             var building = root.AddComponent<BuildingSystem>();
             SetFields(building, ("previewMaterial", previewMaterial), ("gridSize", GridSize));
@@ -779,16 +832,116 @@ namespace ZombieSurvival.EditorTools
                     Debug.LogError($"[ZombieSurvival] Поле {name} не найдено в {target.GetType().Name}");
                     continue;
                 }
-                switch (value)
-                {
-                    case float f: p.floatValue = f; break;
-                    case int i when p.propertyType == SerializedPropertyType.Enum: p.enumValueIndex = i; break;
-                    case int i: p.intValue = i; break;
-                    case string s: p.stringValue = s; break;
-                    case Object o: p.objectReferenceValue = o; break;
-                }
+                Assign(p, value);
             }
             so.ApplyModifiedPropertiesWithoutUndo();
+        }
+
+        static void SetRelative(SerializedProperty element, string name, object value)
+        {
+            var p = element.FindPropertyRelative(name);
+            if (p == null) Debug.LogError($"[ZombieSurvival] Поле {name} не найдено в {element.type}");
+            else Assign(p, value);
+        }
+
+        static void Assign(SerializedProperty p, object value)
+        {
+            switch (value)
+            {
+                case float f: p.floatValue = f; break;
+                case bool b: p.boolValue = b; break;
+                case int i when p.propertyType == SerializedPropertyType.Enum: p.enumValueIndex = i; break;
+                case int i: p.intValue = i; break;
+                case string s: p.stringValue = s; break;
+                case Object o: p.objectReferenceValue = o; break;
+            }
+        }
+
+        // -------------------------------------------------------------- Оружие
+
+        static (GameObject model, Transform muzzle) CreateGunModel(GunSpec spec, Transform holder)
+        {
+            var gun = InstantiateModel($"{Guns}/{spec.model}", holder);
+            gun.name = spec.name;
+            OrientBarrelForward(gun, holder);
+            FitToMaxSize(gun, spec.length);
+            CenterOn(gun, holder);
+            // Длинные стволы сдвигаем вперёд, чтобы приклад не залезал в камеру.
+            gun.transform.position += holder.forward * Mathf.Max(0f, spec.length - 0.4f) * 0.35f;
+            MakeOpaqueMaterials(gun);
+            foreach (var r in gun.GetComponentsInChildren<Renderer>()) r.shadowCastingMode = ShadowCastingMode.Off;
+
+            var b = RendererBounds(gun);
+            var muzzle = new GameObject("Muzzle").transform;
+            muzzle.SetParent(gun.transform, true);
+            muzzle.position = new Vector3(b.center.x, b.center.y + b.extents.y * 0.35f, b.max.z);
+
+            gun.SetActive(spec.start);
+            return (gun, muzzle);
+        }
+
+        /// <summary>
+        /// Разворачивает модель оружия стволом вдоль +Z родителя: находит длинную горизонтальную ось,
+        /// рукоятка (нижняя часть) — сзади, значит ствол на противоположном конце.
+        /// </summary>
+        static void OrientBarrelForward(GameObject gun, Transform space)
+        {
+            var points = new List<Vector3>();
+            foreach (var mf in gun.GetComponentsInChildren<MeshFilter>())
+                if (mf.sharedMesh != null)
+                    foreach (var v in mf.sharedMesh.vertices)
+                        points.Add(space.InverseTransformPoint(mf.transform.TransformPoint(v)));
+            foreach (var smr in gun.GetComponentsInChildren<SkinnedMeshRenderer>())
+                if (smr.sharedMesh != null)
+                    foreach (var v in smr.sharedMesh.vertices)
+                        points.Add(space.InverseTransformPoint(smr.transform.TransformPoint(v)));
+            if (points.Count == 0) return;
+
+            Vector3 min = points[0], max = points[0];
+            foreach (var p in points)
+            {
+                min = Vector3.Min(min, p);
+                max = Vector3.Max(max, p);
+            }
+
+            bool alongX = max.x - min.x > max.z - min.z;
+            float axisCenter = alongX ? (min.x + max.x) * 0.5f : (min.z + max.z) * 0.5f;
+            float lowY = min.y + (max.y - min.y) * 0.3f;
+
+            float sum = 0f;
+            int count = 0;
+            foreach (var p in points)
+            {
+                if (p.y > lowY) continue;
+                sum += alongX ? p.x : p.z;
+                count++;
+            }
+            float gripPos = count > 0 ? sum / count : axisCenter;
+            float sign = gripPos < axisCenter ? 1f : -1f;
+
+            Vector3 barrel = alongX ? new Vector3(sign, 0f, 0f) : new Vector3(0f, 0f, sign);
+            float yaw = -Mathf.Atan2(barrel.x, barrel.z) * Mathf.Rad2Deg;
+            gun.transform.localRotation = Quaternion.Euler(0f, yaw, 0f) * gun.transform.localRotation;
+        }
+
+        /// <summary>
+        /// У моделей Quaternius в FBX прозрачность 0 — делаем непрозрачные URP-материалы того же цвета.
+        /// </summary>
+        static void MakeOpaqueMaterials(GameObject go)
+        {
+            foreach (var r in go.GetComponentsInChildren<Renderer>())
+            {
+                var src = r.sharedMaterials;
+                var dst = new Material[src.Length];
+                for (int i = 0; i < src.Length; i++)
+                {
+                    Color c = src[i] != null ? src[i].color : Color.gray;
+                    c = new Color(Mathf.Clamp01(c.r * 1.8f + 0.03f), Mathf.Clamp01(c.g * 1.8f + 0.03f), Mathf.Clamp01(c.b * 1.8f + 0.03f), 1f);
+                    string key = ColorUtility.ToHtmlStringRGB(c);
+                    dst[i] = Mat($"Gun_{key}", c, 0.35f, 0.3f);
+                }
+                r.sharedMaterials = dst;
+            }
         }
 
         static void SetObjectArray(Object target, string field, Object[] values)
