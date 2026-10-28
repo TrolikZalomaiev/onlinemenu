@@ -304,6 +304,45 @@
         .item:hover .item-name, .item.lit .item-name { color: var(--hot); }
         .item-desc { font-size: 13.5px; color: var(--text-soft); line-height: 1.45; }
         .item-desc:empty { display: none; }
+        .item-allergy {
+            display: inline-block;
+            margin-top: 7px;
+            font-size: 11.5px;
+            font-weight: 600;
+            color: #b0407a;
+            background: rgba(255, 179, 217, .3);
+            padding: 3px 9px;
+            border-radius: 999px;
+        }
+
+        .menu-notes {
+            margin-top: 6px;
+            padding: 14px 16px;
+            border-radius: 20px;
+            border: 1.5px dashed rgba(255, 79, 163, .45);
+            background: rgba(255, 240, 247, .7);
+            opacity: 0;
+        }
+        .menu-page.active .menu-notes {
+            animation: fadeUp .6s ease-out forwards;
+            animation-delay: calc(var(--i) * 0.08s);
+        }
+        .menu-notes .note {
+            position: relative;
+            padding-left: 18px;
+            font-size: 13.5px;
+            color: var(--text-dark);
+            line-height: 1.45;
+        }
+        .menu-notes .note + .note { margin-top: 6px; }
+        .menu-notes .note::before {
+            content: '✦';
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+            font-size: 11px;
+            top: 2px;
+        }
 
         .item-price {
             position: relative;
@@ -390,33 +429,45 @@
 <script>
     const menuData = {
         "Meny": [
-            { name: "Cæsarsalat", desc: "Salat, dressing, grilla kylling, tomat, egg, bacon, parmesan, brød", price: "185 kr" },
-            { name: "Husets Burger", desc: "Briochebrød, heimelaga burger, husets dressing, pommes", price: "275 kr" },
-            { name: "Kyllingsandwich", desc: "Ciabatta, kylling, salat, husets fetaostdressing, pommes", price: "220 kr" },
-            { name: "Ciabatta med ost og skinke", desc: "Nysteikt Ciabatta, ost, skinke, salat, smør", price: "100 kr" },
-            { name: "Ciabatta røykelaks og eggerøre", desc: "Nysteikt ciabatta, røkelaks, eggerøre, salat, smør", price: "120 kr" }
+            { name: "Cæsarsalat", desc: "Salat, husets cæsardressing, grilla kylling, tomat, egg, bacon, parmesan, brød", allergy: "Egg, sulfitt, gluten (hvete), fisk", price: "185 kr" },
+            { name: "Husets Burger", desc: "Briochebrød, heimelaga burger, husets dressing, pommes", allergy: "Gluten (hvete), egg", price: "275 kr" },
+            { name: "Kyllingsandwich", desc: "Ciabatta, kylling, salat, husets fetaostdressing, pommes", allergy: "Gluten (hvete), melk", price: "220 kr" },
+            { name: "Ciabatta med ost og skinke", desc: "Nysteikt ciabatta, ost, skinke, salat, smør", allergy: "Gluten (hvete), melk", price: "100 kr" },
+            { name: "Ciabatta røykelaks og eggerøre", desc: "Nysteikt ciabatta, røykelaks, eggerøre, salat, smør", allergy: "Gluten (hvete), fisk, melk, egg", price: "120 kr" }
         ],
         "Pizza": [
-            { name: "Margarita", desc: "Heimelaga italiensk bunn, rød saus, ost", price: "150 kr" },
-            { name: "Silliana", desc: "Silliana salami, rød saus, ost", price: "170 kr" },
-            { name: "Cæsar", desc: "Kvit saus, kylling, tomat, bacon, ost", price: "180 kr" },
-            { name: "Nduja", desc: "Nduja (chillipølse), rød saus, løк, kjøttdeig, ost", price: "180 kr" },
-            { name: "Pesto-pizza", desc: "Fetaost, oliven, crispi-salat, pesto, ost", price: "170 kr" },
-            { name: "Hangoveren", desc: "Pepperoni, kjøttdeig, fries, kvitløksdressing, ost", price: "190 kr" }
+            { name: "Margarita", desc: "Heimelaga italiensk bunn, rød saus, ost", allergy: "Gluten (hvete), melk", price: "150 kr" },
+            { name: "Silliana", desc: "Heimelaga italiensk bunn, rød saus, Silliana salami, ost", allergy: "Gluten (hvete), melk", price: "170 kr" },
+            { name: "Cæsar", desc: "Heimelaga italiensk bunn, kvit saus, kylling, tomat, bacon, ost", allergy: "Gluten (hvete), melk", price: "180 kr" },
+            { name: "Nduja", desc: "Heimelaga italiensk bunn, nduja (chillipølse), rød saus, løk, kjøttdeig, ost", allergy: "Gluten (hvete), melk", price: "180 kr" },
+            { name: "Pesto-pizza", desc: "Fetaost, oliven, crispi-salat, pesto, ost", allergy: "Gluten (hvete), melk, nøtt (pinjekjerner)", price: "170 kr" },
+            { name: "Hangoveren", desc: "Pepperoni, kjøttdeig, fries, kvitløkdressing, ost", allergy: "Gluten (hvete), melk, nøtt (pinjekjerner)", price: "190 kr" }
         ],
         "Pasta": [
-            { name: "Carbonara", desc: "Pasta, fløte, bacon, egg, parmesan", price: "165 kr" },
-            { name: "Nduja-pasta", desc: "Nduja (chillipølse), pasta, kvitløк, løк, parmensan", price: "175 kr" },
-            { name: "Kyllingpasta", desc: "Pesto, fløte, grillet kylling, parmesan", price: "170 kr" },
-            { name: "Bolognese", desc: "Kjøttdeig, rød saus, løк, kvitløк, parmesan", price: "170 kr" },
-            { name: "Pasta Pesto", desc: "Pesto, pasta, feta, rødløk, cherrytomat, parmesan", price: "165 kr" }
+            { name: "Carbonara", desc: "Pasta, fløte, bacon, egg, parmesan", allergy: "Gluten (hvete), melk", price: "165 kr" },
+            { name: "Nduja-pasta", desc: "Nduja (chillipølse), pasta, kvitløk, løk, parmesan", allergy: "Gluten (hvete), melk", price: "175 kr" },
+            { name: "Kyllingpasta", desc: "Pesto, fløte, grillet kylling, parmesan", allergy: "Gluten (hvete), melk, nøtt (pinjekjerner)", price: "170 kr" },
+            { name: "Bolognese", desc: "Kjøttdeig, rød saus, løk, kvitløk, parmesan", allergy: "Gluten (hvete), melk, sulfitt", price: "170 kr" },
+            { name: "Pasta Pesto", desc: "Pesto, pasta, feta, rødløk, cherrytomat, parmesan", allergy: "Gluten (hvete), melk, nøtt (pinjekjerner)", price: "165 kr" }
         ],
-        "Dessert & Barn": [
-            { name: "Chocolate kake", desc: "sjokoladekake med pepekannøtter и karamellsaus", price: "120 kr" },
-            { name: "Ostekake", desc: "", price: "120 kr" },
+        "Barnemeny": [
+            { name: "Minipizza ost og skinke", desc: "Heimelaga italiensk bunn, ost, skinke", allergy: "Gluten (hvete), melk", price: "99 kr" },
+            { name: "Burger med fries", desc: "", allergy: "Melk, egg, gluten (hvete)", price: "99 kr" },
+            { name: "Pølse med brød/fries", desc: "", allergy: "Gluten (hvete)", price: "99 kr" }
+        ]
+    };
+
+    // Merknader under kategorien
+    const menuNotes = {
+        "Pizza": [
+            "All pizza kan lagast stor, anbefalt til 2–3 pers, for 250–285 kr",
+            "Kvitløkdressing 45 kr",
+            "All pizza kan bestillast som takeaway",
+            "All pizza kan serverast glutenfri +20 kr (kun 30 cm)"
         ],
-        "Dagens": [
-            { name: "Dagens rett", desc: "Dagens utvalde rett frå kjøkkenet", price: "Sjå tavle" }
+        "Pasta": [
+            "All pasta kan serverast med brød",
+            "All pasta kan serverast glutenfritt +20 kr"
         ]
     };
 
@@ -462,12 +513,21 @@
                     <div class="item-info">
                         <div class="item-name">${item.name}</div>
                         <div class="item-desc">${item.desc}</div>
+                        ${item.allergy ? `<div class="item-allergy">Allergen: ${item.allergy}</div>` : ''}
                     </div>
                     <div class="item-price">${item.price}</div>
                 `;
                 addTilt(itemDiv);
                 section.appendChild(itemDiv);
             });
+
+            if (menuNotes[category]) {
+                const notes = document.createElement('div');
+                notes.className = 'menu-notes';
+                notes.style.setProperty('--i', menuData[category].length);
+                notes.innerHTML = menuNotes[category].map(n => `<div class="note">${n}</div>`).join('');
+                section.appendChild(notes);
+            }
             contentDiv.appendChild(section);
         });
 
