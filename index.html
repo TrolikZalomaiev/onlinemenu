@@ -3,229 +3,212 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#ff4fa3">
-    <title>Restaurant Meny</title>
+    <meta name="theme-color" content="#F9F7F7">
+    <title>Meny – Elvehagen Hotell</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Manrope:wght@400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,600;0,700;1,500&family=Lato:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
+        /* Farger frå logoen og nettsida til Elvehagen */
         :root {
-            --primary: #ff4fa3;
-            --primary-2: #ff80bf;
-            --primary-3: #ffb3d9;
-            --hot: #ff2e88;
-            --violet: #c86bff;
-            --peach: #ffb199;
-            --bg-page: #fff0f6;
-            --text-dark: #3a1f2d;
-            --text-soft: #8a6878;
-            --glass: rgba(255, 255, 255, 0.72);
-            --glass-border: rgba(255, 255, 255, 0.9);
+            --pink: #e8239a;
+            --pink-soft: #f774c0;
+            --pink-pale: #fde8f3;
+            --navy: #33425b;
+            --navy-dark: #232f42;
+            --sky: #a3d3ea;
+            --sky-pale: #e9f5fb;
+            --bg: #f9f7f7;
+            --line: #ece6e8;
+            --text: #3a3636;
+            --text-soft: #6c6d7a;
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
-        html, body { min-height: 100%; }
-
         body {
-            font-family: 'Manrope', 'Segoe UI', sans-serif;
-            background: var(--bg-page);
-            color: var(--text-dark);
+            font-family: 'Lato', sans-serif;
+            background: var(--bg);
+            color: var(--text);
             margin: 0;
-            padding: 28px 16px 60px;
+            padding: 28px 16px 56px;
             overflow-x: hidden;
         }
 
-        /* ---------- Живой фон ---------- */
+        /* ---------- Bakgrunn ---------- */
         .bg {
             position: fixed;
             inset: 0;
             z-index: -2;
             overflow: hidden;
-            background:
-                radial-gradient(120% 80% at 50% 0%, #ffe3f0 0%, transparent 60%),
-                linear-gradient(160deg, #fff5f9 0%, #ffe6f1 50%, #ffd9ec 100%);
+            background: var(--bg);
         }
-        .blob {
+        .glow {
             position: absolute;
             border-radius: 50%;
-            filter: blur(60px);
-            opacity: 0.55;
-            mix-blend-mode: multiply;
+            filter: blur(70px);
             will-change: transform;
         }
-        .blob.b1 { width: 420px; height: 420px; background: var(--primary-2); top: -120px; left: -100px; animation: drift1 18s ease-in-out infinite; }
-        .blob.b2 { width: 360px; height: 360px; background: var(--violet); top: 30%; right: -140px; opacity: 0.35; animation: drift2 22s ease-in-out infinite; }
-        .blob.b3 { width: 380px; height: 380px; background: var(--peach); bottom: -140px; left: 10%; opacity: 0.45; animation: drift3 20s ease-in-out infinite; }
-        .blob.b4 { width: 260px; height: 260px; background: var(--hot); top: 55%; left: -80px; opacity: 0.3; animation: drift2 26s ease-in-out infinite reverse; }
+        .glow.g1 { width: 420px; height: 420px; background: var(--pink-pale); top: -140px; left: -120px; animation: drift1 22s ease-in-out infinite; }
+        .glow.g2 { width: 380px; height: 380px; background: var(--sky-pale); bottom: -140px; right: -120px; animation: drift2 26s ease-in-out infinite; }
 
-        @keyframes drift1 { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(120px, 90px) scale(1.2); } }
-        @keyframes drift2 { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(-110px, -70px) scale(1.15); } }
-        @keyframes drift3 { 0%,100% { transform: translate(0,0) scale(1.1); } 50% { transform: translate(90px, -120px) scale(0.9); } }
+        @keyframes drift1 { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(90px, 70px) scale(1.15); } }
+        @keyframes drift2 { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(-90px, -60px) scale(1.1); } }
 
-        canvas.fx { position: fixed; inset: 0; pointer-events: none; }
-        #bg-canvas { z-index: -1; }
-        #fx-canvas { z-index: 50; }
+        #petals { position: fixed; inset: 0; z-index: -1; pointer-events: none; }
 
-        /* ---------- Карточка ---------- */
-        .card-wrap {
+        /* ---------- Kort ---------- */
+        .container {
             position: relative;
-            max-width: 560px;
+            max-width: 600px;
             margin: 0 auto;
-            border-radius: 28px;
-            animation: cardIn 1s cubic-bezier(.2,.9,.25,1.15) both;
+            background: rgba(255, 255, 255, .88);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            padding: 34px 26px 22px;
+            border-radius: 6px;
+            border: 1px solid var(--line);
+            box-shadow: 0 20px 50px rgba(51, 66, 91, .08);
+            animation: cardIn .9s cubic-bezier(.2,.8,.25,1) both;
         }
+        /* Tynn rosa-blå linje øvst, som vatnet i logoen */
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            border-radius: 6px 6px 0 0;
+            background: linear-gradient(90deg, var(--pink-soft), var(--pink), var(--sky), var(--pink-soft));
+            background-size: 300% 100%;
+            animation: flow 8s linear infinite;
+        }
+        @keyframes flow { to { background-position: 300% 0; } }
+
         @keyframes cardIn {
-            from { opacity: 0; transform: translateY(40px) scale(0.94); filter: blur(8px); }
+            from { opacity: 0; transform: translateY(30px); }
+            to   { opacity: 1; transform: none; }
+        }
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(12px); }
+            to   { opacity: 1; transform: none; }
+        }
+
+        /* ---------- Topp ---------- */
+        .hero { text-align: center; margin-bottom: 26px; }
+
+        .logo {
+            display: block;
+            width: 230px;
+            max-width: 70%;
+            height: auto;
+            margin: 0 auto;
+            opacity: 0;
+            animation: logoIn 1.1s .2s cubic-bezier(.2,.8,.25,1) forwards;
+        }
+        @keyframes logoIn {
+            from { opacity: 0; transform: translateY(-14px) scale(.96); filter: blur(4px); }
             to   { opacity: 1; transform: none; filter: none; }
         }
 
-        .container {
-            position: relative;
-            z-index: 1;
-            background: var(--glass);
-            backdrop-filter: blur(22px) saturate(160%);
-            -webkit-backdrop-filter: blur(22px) saturate(160%);
-            padding: 30px 22px 18px;
-            border-radius: 28px;
-            overflow: hidden;
-            box-shadow: 0 20px 50px rgba(255, 46, 136, .15);
+        h1 {
+            font-family: 'Lora', Georgia, serif;
+            font-weight: 600;
+            font-size: clamp(36px, 10vw, 48px);
+            color: var(--navy);
+            line-height: 1.1;
+            margin: 22px 0 0;
+            opacity: 0;
+            animation: fadeUp .8s .6s ease-out forwards;
         }
 
-        /* ---------- Заголовок ---------- */
-        .hero { text-align: center; margin-bottom: 26px; }
-
-        .ornament {
+        .divider {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
-            color: var(--primary);
-            font-size: 14px;
+            gap: 12px;
+            margin-top: 10px;
             opacity: 0;
-            animation: fadeUp .8s .9s ease-out forwards;
+            animation: fadeUp .8s .8s ease-out forwards;
         }
-        .ornament .line {
-            width: 46px; height: 2px; border-radius: 2px;
-            background: linear-gradient(90deg, transparent, var(--primary));
+        .divider .line {
+            height: 1px;
+            width: 0;
+            background: var(--navy);
+            opacity: .45;
+            animation: grow 1s 1s ease-out forwards;
         }
-        .ornament .line:last-child { background: linear-gradient(90deg, var(--primary), transparent); }
-        .ornament .star { display: inline-block; animation: twinkle 2.4s ease-in-out infinite; }
-        .ornament .star:nth-child(3) { animation-delay: .4s; font-size: 18px; }
-        .ornament .star:nth-child(4) { animation-delay: .8s; }
+        @keyframes grow { to { width: 54px; } }
+        .divider .dot {
+            width: 7px; height: 7px;
+            border-radius: 50%;
+            background: var(--pink);
+            box-shadow: 0 0 0 4px var(--pink-pale);
+            animation: pulse 2.6s ease-in-out infinite;
+        }
+        @keyframes pulse { 50% { transform: scale(1.35); box-shadow: 0 0 0 7px var(--pink-pale); } }
 
-        @keyframes twinkle {
-            0%,100% { transform: scale(1) rotate(0); opacity: 1; }
-            50% { transform: scale(1.5) rotate(90deg); opacity: .6; }
-        }
-
-        h1 {
-            font-family: 'Playfair Display', Georgia, serif;
-            font-weight: 900;
-            font-size: clamp(52px, 15vw, 76px);
-            line-height: 1;
-            margin: 10px 0 8px;
-            letter-spacing: 1px;
-        }
-        h1 .ch {
-            display: inline-block;
-            background: linear-gradient(110deg, var(--hot) 0%, var(--violet) 30%, var(--primary-2) 50%, var(--hot) 70%, var(--violet) 100%);
-            background-size: 250% 100%;
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            opacity: 0;
-            transform: translateY(-80px) rotate(-20deg) scale(.4);
-            animation:
-                dropIn .9s cubic-bezier(.3,1.6,.5,1) forwards,
-                shimmer 4s linear infinite,
-                bob 3s ease-in-out infinite;
-            animation-delay: calc(var(--i) * 0.12s + .3s), 0s, calc(var(--i) * 0.2s + 1.4s);
-            filter: drop-shadow(0 6px 14px rgba(255, 46, 136, .35));
-        }
-        @keyframes dropIn { to { opacity: 1; transform: none; } }
-        @keyframes shimmer { to { background-position: -250% 0; } }
-        @keyframes bob { 0%,100% { translate: 0 0; } 50% { translate: 0 -6px; } }
-
-        @keyframes fadeUp {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: none; }
-        }
-
-        /* ---------- Вкладки ---------- */
+        /* ---------- Faner ---------- */
         .tabs-container {
             position: relative;
             display: flex;
             overflow-x: auto;
-            gap: 8px;
-            margin: 0 -22px 18px;
-            padding: 8px 22px 14px;
+            gap: 6px;
+            margin: 0 -26px 20px;
+            padding: 4px 26px 4px;
+            border-bottom: 1px solid var(--line);
             scrollbar-width: none;
             -ms-overflow-style: none;
             -webkit-overflow-scrolling: touch;
             opacity: 0;
-            animation: fadeUp .7s 1.1s ease-out forwards;
-            -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 22px, #000 calc(100% - 22px), transparent 100%);
-                    mask-image: linear-gradient(90deg, transparent 0, #000 22px, #000 calc(100% - 22px), transparent 100%);
+            animation: fadeUp .7s 1s ease-out forwards;
         }
         .tabs-container::-webkit-scrollbar { display: none; }
 
         .tab-indicator {
             position: absolute;
-            top: 8px;
+            bottom: -1px;
             left: 0;
-            height: 44px;
-            border-radius: 999px;
-            background: linear-gradient(120deg, var(--hot), var(--primary-2), var(--violet));
-            background-size: 200% 200%;
-            box-shadow: 0 8px 22px rgba(255, 46, 136, .45), inset 0 1px 0 rgba(255,255,255,.5);
-            transition: transform .55s cubic-bezier(.5,1.6,.4,1), width .55s cubic-bezier(.5,1.6,.4,1);
-            animation: gradientFlow 4s ease infinite;
-            z-index: 0;
+            height: 3px;
+            border-radius: 3px 3px 0 0;
+            background: var(--pink);
+            transition: transform .5s cubic-bezier(.6,1.4,.4,1), width .5s cubic-bezier(.6,1.4,.4,1);
+            z-index: 2;
         }
-        @keyframes gradientFlow { 0%,100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
 
         .tab-btn {
             position: relative;
             z-index: 1;
-            height: 44px;
-            padding: 0 20px;
-            border: 1.5px solid rgba(255, 128, 191, .35);
-            background: rgba(255, 230, 240, .6);
-            border-radius: 999px;
+            padding: 12px 16px 14px;
+            border: none;
+            background: none;
             cursor: pointer;
             white-space: nowrap;
-            font-family: inherit;
-            font-weight: 800;
-            font-size: 15px;
-            color: #8a4f6c;
+            font-family: 'Lato', sans-serif;
+            font-weight: 700;
+            font-size: 14px;
+            letter-spacing: 1.4px;
+            text-transform: uppercase;
+            color: var(--text-soft);
             flex-shrink: 0;
             overflow: hidden;
-            transition: color .35s, background .35s, border-color .35s, transform .25s cubic-bezier(.3,1.8,.5,1);
+            border-radius: 6px 6px 0 0;
+            transition: color .3s, background .3s;
         }
-        .tab-btn:hover { transform: translateY(-2px); color: var(--hot); }
-        .tab-btn:active { transform: scale(.92); }
-        .tab-btn.active {
-            background: transparent;
-            border-color: transparent;
-            color: #fff;
-            text-shadow: 0 1px 6px rgba(160, 0, 70, .35);
-        }
-        .tab-btn:focus-visible { outline: 3px solid var(--violet); outline-offset: 2px; }
+        .tab-btn:hover { color: var(--navy); background: var(--sky-pale); }
+        .tab-btn.active { color: var(--pink); }
+        .tab-btn:focus-visible { outline: 2px solid var(--sky); outline-offset: -2px; }
 
         .ripple {
             position: absolute;
             border-radius: 50%;
-            background: rgba(255, 255, 255, .7);
+            background: rgba(232, 35, 154, .15);
             transform: scale(0);
-            animation: ripple .7s ease-out forwards;
+            animation: ripple .6s ease-out forwards;
             pointer-events: none;
         }
         @keyframes ripple { to { transform: scale(4); opacity: 0; } }
 
-        /* ---------- Пункты меню ---------- */
-        #menu-content { position: relative; }
-
+        /* ---------- Rettar ---------- */
         .menu-page { display: none; }
         .menu-page.active { display: block; }
 
@@ -233,162 +216,127 @@
             position: relative;
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            gap: 14px;
-            padding: 16px 16px;
-            margin-bottom: 10px;
-            border-radius: 20px;
-            background: rgba(255, 255, 255, .75);
-            border: 1px solid rgba(255, 179, 217, .45);
-            box-shadow: 0 4px 14px rgba(255, 79, 163, .08);
+            align-items: flex-start;
+            gap: 16px;
+            padding: 18px 14px 18px 18px;
+            border-bottom: 1px solid var(--line);
             overflow: hidden;
             opacity: 0;
-            transform-style: preserve-3d;
-            transition: transform .35s cubic-bezier(.3,1.6,.5,1), box-shadow .35s, border-color .35s;
+            transition: background .35s;
         }
+        .item:last-of-type { border-bottom: none; }
         .menu-page.active .item {
-            animation: itemIn .75s cubic-bezier(.2,1.3,.35,1) forwards;
-            animation-delay: calc(var(--i) * 0.08s);
+            animation: itemIn .65s cubic-bezier(.2,.8,.25,1) forwards;
+            animation-delay: calc(var(--i) * 0.07s);
         }
         .menu-page.from-left.active .item { animation-name: itemInLeft; }
 
         @keyframes itemIn {
-            from { opacity: 0; translate: 60px 0; rotate: 3deg; scale: .9; filter: blur(6px); }
-            to   { opacity: 1; translate: 0 0; rotate: 0deg; scale: 1; filter: none; }
+            from { opacity: 0; translate: 36px 0; }
+            to   { opacity: 1; translate: 0 0; }
         }
         @keyframes itemInLeft {
-            from { opacity: 0; translate: -60px 0; rotate: -3deg; scale: .9; filter: blur(6px); }
-            to   { opacity: 1; translate: 0 0; rotate: 0deg; scale: 1; filter: none; }
+            from { opacity: 0; translate: -36px 0; }
+            to   { opacity: 1; translate: 0 0; }
         }
 
-        /* Акцентная полоска слева */
+        /* Rosa strek til venstre ved hover */
         .item::before {
             content: '';
             position: absolute;
-            left: 0; top: 18%; bottom: 18%;
-            width: 4px;
-            border-radius: 0 4px 4px 0;
-            background: linear-gradient(var(--hot), var(--violet));
+            left: 0; top: 18px; bottom: 18px;
+            width: 3px;
+            border-radius: 3px;
+            background: linear-gradient(var(--pink), var(--sky));
             transform: scaleY(0);
-            transition: transform .4s cubic-bezier(.3,1.6,.5,1);
+            transition: transform .4s cubic-bezier(.3,1.4,.5,1);
         }
-        /* Блик, пробегающий по карточке */
+        /* Lysglimt over raden */
         .item::after {
             content: '';
             position: absolute;
             top: 0; bottom: 0;
             left: -60%;
             width: 40%;
-            background: linear-gradient(100deg, transparent, rgba(255,255,255,.85), transparent);
+            background: linear-gradient(100deg, transparent, rgba(255,255,255,.9), transparent);
             transform: skewX(-20deg);
             pointer-events: none;
         }
-
-        .item.lit, .item:hover {
-            box-shadow: 0 14px 34px rgba(255, 46, 136, .22);
-            border-color: rgba(255, 79, 163, .6);
-        }
-        .item.lit::before, .item:hover::before { transform: scaleY(1); }
-        .item.lit::after, .item:hover::after { animation: shine .9s ease; }
+        .item:hover, .item.lit { background: linear-gradient(90deg, var(--pink-pale), rgba(253, 232, 243, 0)); }
+        .item:hover::before, .item.lit::before { transform: scaleY(1); }
+        .item:hover::after, .item.lit::after { animation: shine .9s ease; }
         @keyframes shine { to { left: 130%; } }
 
         .item-info { flex: 1; min-width: 0; }
         .item-name {
-            font-family: 'Playfair Display', Georgia, serif;
-            font-weight: 700;
+            font-family: 'Lora', Georgia, serif;
+            font-weight: 600;
             font-size: 19px;
+            color: var(--navy);
             margin-bottom: 4px;
-            color: var(--text-dark);
             transition: color .3s;
         }
-        .item:hover .item-name, .item.lit .item-name { color: var(--hot); }
-        .item-desc { font-size: 13.5px; color: var(--text-soft); line-height: 1.45; }
+        .item:hover .item-name, .item.lit .item-name { color: var(--pink); }
+        .item-desc { font-size: 14.5px; color: var(--text-soft); line-height: 1.55; }
         .item-desc:empty { display: none; }
         .item-allergy {
             display: inline-block;
-            margin-top: 7px;
-            font-size: 11.5px;
-            font-weight: 600;
-            color: #b0407a;
-            background: rgba(255, 179, 217, .3);
-            padding: 3px 9px;
+            margin-top: 8px;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--navy);
+            background: var(--sky-pale);
+            padding: 3px 10px;
             border-radius: 999px;
         }
 
+        .item-price {
+            font-family: 'Lora', Georgia, serif;
+            font-weight: 700;
+            font-size: 18px;
+            white-space: nowrap;
+            color: var(--pink);
+            padding-top: 1px;
+            transition: transform .35s cubic-bezier(.3,1.8,.5,1);
+        }
+        .item:hover .item-price, .item.lit .item-price { transform: scale(1.1); }
+
         .menu-notes {
-            margin-top: 6px;
-            padding: 14px 16px;
-            border-radius: 20px;
-            border: 1.5px dashed rgba(255, 79, 163, .45);
-            background: rgba(255, 240, 247, .7);
+            margin-top: 14px;
+            padding: 16px 18px;
+            border-radius: 6px;
+            background: var(--sky-pale);
+            border-left: 3px solid var(--sky);
             opacity: 0;
         }
         .menu-page.active .menu-notes {
             animation: fadeUp .6s ease-out forwards;
-            animation-delay: calc(var(--i) * 0.08s);
+            animation-delay: calc(var(--i) * 0.07s);
         }
         .menu-notes .note {
             position: relative;
             padding-left: 18px;
-            font-size: 13.5px;
-            color: var(--text-dark);
-            line-height: 1.45;
+            font-size: 14px;
+            color: var(--navy);
+            line-height: 1.5;
         }
         .menu-notes .note + .note { margin-top: 6px; }
         .menu-notes .note::before {
-            content: '✦';
-            position: absolute;
-            left: 0;
-            color: var(--primary);
-            font-size: 11px;
-            top: 2px;
-        }
-
-        .item-price {
-            position: relative;
-            font-weight: 800;
-            font-size: 15px;
-            white-space: nowrap;
-            color: #fff;
-            padding: 8px 14px;
-            border-radius: 999px;
-            background: linear-gradient(120deg, var(--hot), var(--primary-2), var(--violet));
-            background-size: 200% 200%;
-            box-shadow: 0 6px 16px rgba(255, 46, 136, .35);
-            animation: gradientFlow 5s ease infinite;
-            transition: transform .35s cubic-bezier(.3,1.8,.5,1);
-        }
-        .item:hover .item-price, .item.lit .item-price { transform: scale(1.12) rotate(-4deg); }
-        .item-price::after {
             content: '';
             position: absolute;
-            inset: -4px;
-            border-radius: inherit;
-            border: 2px solid var(--primary-2);
-            opacity: 0;
+            left: 2px; top: 8px;
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: var(--pink);
         }
-        .item:hover .item-price::after, .item.lit .item-price::after { animation: pulseRing 1.2s ease-out infinite; }
-        @keyframes pulseRing {
-            from { opacity: .8; transform: scale(.9); }
-            to   { opacity: 0; transform: scale(1.35); }
-        }
-
-        .swipe-hint {
-            text-align: center;
-            font-size: 12px;
-            color: var(--text-soft);
-            opacity: .7;
-            margin-top: 6px;
-            letter-spacing: .5px;
-        }
-        @media (hover: hover) { .swipe-hint { display: none; } }
 
         @media (max-width: 400px) {
-            .container { padding: 24px 16px 14px; }
-            .tabs-container { margin: 0 -16px 16px; padding: 8px 16px 14px; }
-            .item { padding: 14px 13px; }
+            .container { padding: 28px 18px 16px; }
+            .tabs-container { margin: 0 -18px 16px; padding: 4px 18px 4px; }
+            .tab-btn { padding: 12px 12px 14px; font-size: 13px; letter-spacing: 1px; }
+            .item { padding: 16px 8px 16px 14px; }
             .item-name { font-size: 17px; }
-            .item-price { font-size: 14px; padding: 7px 11px; }
+            .item-price { font-size: 16px; }
         }
 
         @media (prefers-reduced-motion: reduce) {
@@ -404,26 +352,19 @@
 <body>
 
 <div class="bg" aria-hidden="true">
-    <div class="blob b1"></div>
-    <div class="blob b2"></div>
-    <div class="blob b3"></div>
-    <div class="blob b4"></div>
+    <div class="glow g1"></div>
+    <div class="glow g2"></div>
 </div>
-<canvas class="fx" id="bg-canvas" aria-hidden="true"></canvas>
-<canvas class="fx" id="fx-canvas" aria-hidden="true"></canvas>
+<canvas id="petals" aria-hidden="true"></canvas>
 
-<div class="card-wrap">
-    <div class="container">
-        <div class="hero">
-            <div class="ornament" aria-hidden="true">
-                <span class="line"></span><span class="star">✦</span><span class="star">✦</span><span class="star">✦</span><span class="line"></span>
-            </div>
-            <h1 id="title">Meny</h1>
-        </div>
-        <div class="tabs-container" id="tabs"></div>
-        <div id="menu-content"></div>
-        <div class="swipe-hint" aria-hidden="true">‹ sveip ›</div>
+<div class="container">
+    <div class="hero">
+        <img class="logo" src="data:image/webp;base64,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" alt="Elvehagen Hotell" width="292" height="74">
+        <h1>Meny</h1>
+        <div class="divider" aria-hidden="true"><span class="line"></span><span class="dot"></span><span class="line"></span></div>
     </div>
+    <div class="tabs-container" id="tabs"></div>
+    <div id="menu-content"></div>
 </div>
 
 <script>
@@ -478,29 +419,25 @@
         const tabsDiv = document.getElementById('tabs');
         const contentDiv = document.getElementById('menu-content');
 
-        // Очищаем на всякий случай
         tabsDiv.innerHTML = '';
         contentDiv.innerHTML = '';
 
-        // Скользящая "таблетка" под активной вкладкой
+        // Rosa strek under aktiv fane
         const indicator = document.createElement('div');
         indicator.className = 'tab-indicator';
         indicator.id = 'tab-indicator';
         tabsDiv.appendChild(indicator);
 
         Object.keys(menuData).forEach((category, index) => {
-            // Создаем кнопку
             const btn = document.createElement('button');
             btn.className = `tab-btn ${index === 0 ? 'active' : ''}`;
             btn.innerText = category;
-            btn.setAttribute('data-target', index); // Привязываем индекс
             btn.onclick = (e) => {
                 addRipple(btn, e);
                 openTab(index, btn);
             };
             tabsDiv.appendChild(btn);
 
-            // Создаем секцию контента
             const section = document.createElement('div');
             section.id = `section-${index}`;
             section.className = `menu-page ${index === 0 ? 'active' : ''}`;
@@ -517,7 +454,7 @@
                     </div>
                     <div class="item-price">${item.price}</div>
                 `;
-                addTilt(itemDiv);
+                addTouchGlow(itemDiv);
                 section.appendChild(itemDiv);
             });
 
@@ -531,43 +468,28 @@
             contentDiv.appendChild(section);
         });
 
-        // Заголовок по буквам
-        const title = document.getElementById('title');
-        title.setAttribute('aria-label', title.textContent);
-        title.innerHTML = [...title.textContent]
-            .map((ch, i) => `<span class="ch" aria-hidden="true" style="--i:${i}">${ch}</span>`)
-            .join('');
-
-        requestAnimationFrame(() => moveIndicator(tabsDiv.querySelector('.tab-btn.active'), true));
-        window.addEventListener('resize', () => moveIndicator(tabsDiv.querySelector('.tab-btn.active'), true));
-        if (document.fonts) document.fonts.ready.then(() => moveIndicator(tabsDiv.querySelector('.tab-btn.active'), true));
+        const placeIndicator = () => moveIndicator(tabsDiv.querySelector('.tab-btn.active'), true);
+        requestAnimationFrame(placeIndicator);
+        window.addEventListener('resize', placeIndicator);
+        if (document.fonts) document.fonts.ready.then(placeIndicator);
 
         addSwipe(contentDiv);
     }
 
     function openTab(index, btn) {
-        if (index === currentIndex) {
-            burst(btn, 10);
-            return;
-        }
+        if (index === currentIndex) return;
         const goingLeft = index < currentIndex;
         currentIndex = index;
 
-        // Убираем активный класс у всех кнопок и страниц
         document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
         document.querySelectorAll('.menu-page').forEach(p => p.classList.remove('active', 'from-left'));
 
-        // Активируем нужные
         btn.classList.add('active');
         const page = document.getElementById(`section-${index}`);
         page.classList.toggle('from-left', goingLeft);
         page.classList.add('active');
 
         moveIndicator(btn);
-        burst(btn, 22);
-        if (navigator.vibrate) navigator.vibrate(12);
-
-        // Плавно скроллим кнопку в центр
         btn.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
     }
 
@@ -578,7 +500,7 @@
         indicator.style.width = btn.offsetWidth + 'px';
         indicator.style.transform = `translateX(${btn.offsetLeft}px)`;
         if (instant) {
-            indicator.offsetWidth; // применяем без анимации
+            indicator.offsetWidth;
             indicator.style.transition = '';
         }
     }
@@ -592,34 +514,19 @@
         r.style.left = ((e.clientX || rect.left + rect.width / 2) - rect.left - size / 2) + 'px';
         r.style.top = ((e.clientY || rect.top + rect.height / 2) - rect.top - size / 2) + 'px';
         btn.appendChild(r);
-        setTimeout(() => r.remove(), 700);
+        setTimeout(() => r.remove(), 600);
     }
 
-    // 3D-наклон карточки за курсором / пальцем
-    function addTilt(el) {
-        if (reduceMotion) return;
-        el.addEventListener('pointermove', (e) => {
-            if (e.pointerType !== 'mouse') return;
-            const r = el.getBoundingClientRect();
-            const x = (e.clientX - r.left) / r.width - 0.5;
-            const y = (e.clientY - r.top) / r.height - 0.5;
-            el.style.transform = `perspective(700px) rotateX(${-y * 8}deg) rotateY(${x * 8}deg) translateY(-3px) scale(1.02)`;
-        });
-        el.addEventListener('pointerleave', () => { el.style.transform = ''; });
+    // På mobil: same effekt som hover når ein trykkjer på ein rett
+    function addTouchGlow(el) {
         el.addEventListener('pointerdown', (e) => {
+            if (e.pointerType === 'mouse') return;
             el.classList.add('lit');
-            el.style.transform = 'scale(.97)';
-            sparkleAt(e.clientX, e.clientY, 8);
+            setTimeout(() => el.classList.remove('lit'), 1000);
         });
-        const release = () => {
-            el.style.transform = '';
-            setTimeout(() => el.classList.remove('lit'), 900);
-        };
-        el.addEventListener('pointerup', release);
-        el.addEventListener('pointercancel', release);
     }
 
-    // Свайп между вкладками на телефоне
+    // Sveip mellom fanene på mobil
     function addSwipe(area) {
         let sx = 0, sy = 0, tracking = false;
         area.addEventListener('touchstart', (e) => {
@@ -637,166 +544,77 @@
         }, { passive: true });
     }
 
-    /* ---------- Частицы: лепестки, искры ---------- */
-    const COLORS = ['#ff2e88', '#ff4fa3', '#ff80bf', '#ffb3d9', '#c86bff', '#ffb199'];
-    const bgCanvas = document.getElementById('bg-canvas');
-    const fxCanvas = document.getElementById('fx-canvas');
-    const bgCtx = bgCanvas.getContext('2d');
-    const fxCtx = fxCanvas.getContext('2d');
-    let W = 0, H = 0, DPR = 1;
-    const ambient = [];
-    const effects = [];
+    /* ---------- Blomeblad som dalar ned, som frå treet i logoen ---------- */
+    const COLORS = ['#e8239a', '#f774c0', '#f9a8d4', '#a3d3ea'];
+    const canvas = document.getElementById('petals');
+    const ctx = canvas.getContext('2d');
+    let W = 0, H = 0;
+    const petals = [];
 
     function resize() {
-        DPR = Math.min(window.devicePixelRatio || 1, 2);
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
         W = window.innerWidth; H = window.innerHeight;
-        [bgCanvas, fxCanvas].forEach(c => {
-            c.width = W * DPR; c.height = H * DPR;
-            c.style.width = W + 'px'; c.style.height = H + 'px';
-        });
-        bgCtx.setTransform(DPR, 0, 0, DPR, 0, 0);
-        fxCtx.setTransform(DPR, 0, 0, DPR, 0, 0);
+        canvas.width = W * dpr; canvas.height = H * dpr;
+        canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     }
 
     const rand = (a, b) => a + Math.random() * (b - a);
-    const pick = arr => arr[(Math.random() * arr.length) | 0];
 
-    function makeAmbient(initial) {
+    function makePetal(initial) {
         return {
             x: rand(0, W),
-            y: initial ? rand(0, H) : H + 30,
-            size: rand(6, 16),
-            vy: rand(0.25, 0.8),
-            sway: rand(0.5, 1.6),
+            y: initial ? rand(-H, H) : rand(-60, -20),
+            size: rand(6, 12),
+            vy: rand(0.35, 0.9),
+            sway: rand(0.4, 1.2),
             phase: rand(0, Math.PI * 2),
             rot: rand(0, Math.PI * 2),
             vr: rand(-0.02, 0.02),
-            color: pick(COLORS),
-            alpha: rand(0.25, 0.6),
-            shape: pick(['petal', 'petal', 'dot', 'star'])
+            flip: rand(0, Math.PI * 2),
+            color: COLORS[(Math.random() * COLORS.length) | 0],
+            alpha: rand(0.25, 0.55)
         };
     }
 
-    function drawPetal(ctx, s) {
-        ctx.beginPath();
-        ctx.ellipse(0, 0, s * 0.25, s * 0.5, 0, 0, Math.PI * 2);
-        ctx.fill();
-    }
-    function drawStar(ctx, s) {
-        ctx.beginPath();
-        for (let i = 0; i < 8; i++) {
-            const r = i % 2 === 0 ? s * 0.5 : s * 0.14;
-            const a = (i / 8) * Math.PI * 2;
-            ctx.lineTo(Math.cos(a) * r, Math.sin(a) * r);
-        }
-        ctx.closePath();
-        ctx.fill();
-    }
-    function drawShape(ctx, p) {
-        ctx.save();
-        ctx.translate(p.x, p.y);
-        ctx.rotate(p.rot);
-        ctx.globalAlpha = p.alpha;
-        ctx.fillStyle = p.color;
-        if (p.shape === 'petal') drawPetal(ctx, p.size);
-        else if (p.shape === 'star') drawStar(ctx, p.size);
-        else { ctx.beginPath(); ctx.arc(0, 0, p.size * 0.22, 0, Math.PI * 2); ctx.fill(); }
-        ctx.restore();
-    }
-
-    // Взрыв искр от кнопки
-    function burst(el, count) {
-        if (reduceMotion) return;
-        const r = el.getBoundingClientRect();
-        const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
-        for (let i = 0; i < count; i++) {
-            const a = rand(0, Math.PI * 2);
-            const sp = rand(2, 7);
-            effects.push({
-                x: cx, y: cy,
-                vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 2,
-                g: 0.15, drag: 0.97,
-                size: rand(8, 18), rot: rand(0, 6), vr: rand(-0.2, 0.2),
-                color: pick(COLORS), alpha: 1, fade: rand(0.012, 0.022),
-                shape: pick(['star', 'star', 'petal'])
-            });
-        }
-    }
-
-    function sparkleAt(x, y, count) {
-        if (reduceMotion) return;
-        for (let i = 0; i < count; i++) {
-            const a = rand(0, Math.PI * 2), sp = rand(0.5, 3);
-            effects.push({
-                x, y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp,
-                g: 0.03, drag: 0.95,
-                size: rand(5, 11), rot: rand(0, 6), vr: rand(-0.15, 0.15),
-                color: pick(COLORS), alpha: 1, fade: rand(0.025, 0.04),
-                shape: pick(['star', 'dot'])
-            });
-        }
-    }
-
-    // Шлейф искр за курсором
-    let lastTrail = 0;
-    window.addEventListener('pointermove', (e) => {
-        if (reduceMotion || e.pointerType !== 'mouse') return;
-        const now = performance.now();
-        if (now - lastTrail < 30) return;
-        lastTrail = now;
-        effects.push({
-            x: e.clientX, y: e.clientY,
-            vx: rand(-0.6, 0.6), vy: rand(-0.4, 0.8),
-            g: 0.02, drag: 0.98,
-            size: rand(6, 12), rot: rand(0, 6), vr: rand(-0.1, 0.1),
-            color: pick(COLORS), alpha: 0.9, fade: 0.03,
-            shape: pick(['star', 'dot'])
-        });
-    });
-
-    let running = true;
     function tick(t) {
-        if (!running) return;
-        bgCtx.clearRect(0, 0, W, H);
-        for (let i = 0; i < ambient.length; i++) {
-            const p = ambient[i];
-            p.y -= p.vy;
-            p.x += Math.sin(t / 1000 * p.sway + p.phase) * 0.4;
+        if (document.hidden) return;
+        ctx.clearRect(0, 0, W, H);
+        for (let i = 0; i < petals.length; i++) {
+            const p = petals[i];
+            p.y += p.vy;
+            p.x += Math.sin(t / 1000 * p.sway + p.phase) * 0.6;
             p.rot += p.vr;
-            if (p.y < -30) ambient[i] = makeAmbient(false);
-            drawShape(bgCtx, p);
-        }
-
-        fxCtx.clearRect(0, 0, W, H);
-        for (let i = effects.length - 1; i >= 0; i--) {
-            const p = effects[i];
-            p.vx *= p.drag; p.vy = p.vy * p.drag + p.g;
-            p.x += p.vx; p.y += p.vy;
-            p.rot += p.vr;
-            p.alpha -= p.fade;
-            if (p.alpha <= 0) { effects.splice(i, 1); continue; }
-            drawShape(fxCtx, p);
+            p.flip += 0.03;
+            if (p.y > H + 30) petals[i] = makePetal(false);
+            ctx.save();
+            ctx.translate(p.x, p.y);
+            ctx.rotate(p.rot);
+            ctx.scale(1, Math.abs(Math.cos(p.flip)) * 0.7 + 0.3);
+            ctx.globalAlpha = p.alpha;
+            ctx.fillStyle = p.color;
+            ctx.beginPath();
+            ctx.ellipse(0, 0, p.size * 0.32, p.size * 0.55, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
         }
         requestAnimationFrame(tick);
     }
 
-    function startParticles() {
+    function startPetals() {
         resize();
         window.addEventListener('resize', resize);
         if (reduceMotion) return;
-        const count = Math.round(Math.min(45, (W * H) / 22000));
-        for (let i = 0; i < count; i++) ambient.push(makeAmbient(true));
+        const count = Math.round(Math.min(26, (W * H) / 40000));
+        for (let i = 0; i < count; i++) petals.push(makePetal(true));
         document.addEventListener('visibilitychange', () => {
-            running = !document.hidden;
-            if (running) requestAnimationFrame(tick);
+            if (!document.hidden) requestAnimationFrame(tick);
         });
         requestAnimationFrame(tick);
-        // Приветственный салют после появления заголовка
-        setTimeout(() => burst(document.getElementById('title'), 36), 900);
     }
 
     init();
-    startParticles();
+    startPetals();
 </script>
 
 </body>
